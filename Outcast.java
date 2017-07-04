@@ -2,13 +2,12 @@ import edu.princeton.cs.algs4.In;
 public class Outcast {
     
     private final Word wordnet;
-    // constructor takes a WordNet object
+    // input a Word object
     public Outcast(Word wordnet) {
         this.wordnet = wordnet;
     }
-    // given an array of WordNet nouns, return an outcast
+    // returns least similar noun from array
     public String outcast(String[] nouns) {
-        // if the nouns passed do not belong to the wordnet object, an exception will be thrown implcitly
         int max = 0;
         String noun = nouns[0];
         for (String s1 : nouns) {
