@@ -6,25 +6,22 @@ import edu.princeton.cs.algs4.ST;
 public class DeluxeBFS {
     
     private final Digraph G;
-    // constructor takes in the digraph G
+    // input directed graph of synset-hypernym links
     public DeluxeBFS(Digraph G) {
         this.G = G;
     }
     
-    // create an iterable item with the single vertex, so that the reachable_vertices(Iterable) can be used to improve readability
-    // time taken: O(vertices reachable from vertex v)
+    // create an iterable item with the single vertex, so that the reachable_vertices(Iterable) can be used 
     public ST<Integer, Integer> reachable_vertices(int v) {
         List<Integer> list = new LinkedList<Integer>();
         list.add(v);
         return reachable_vertices(list);
     }
     
-    // create a symbol table for a vertex v, that has keys = vertices and values = length of path from vertex v to the key vertex
-    // time taken: O(vertices reachable from vertices in subset)
+    // create a symbol table for a vertex v with keys = vertices and values = length of path from vertex v to the key vertex
     public ST<Integer, Integer> reachable_vertices(Iterable<Integer> subset) {
         Queue<Integer> queue = new Queue<Integer>();
         ST<Integer, Integer> st = new ST<Integer, Integer>();
-        // iterates through all vertices in the subset and enqueues them and adds to the symbol table
         for (int i : subset) {
             queue.enqueue(i);
             // length of path from vertex i to itself is 0
@@ -34,7 +31,7 @@ public class DeluxeBFS {
         while (!queue.isEmpty()) {
             int vertex = queue.dequeue();
             int distance = st.get(vertex);
-            // we enqueue all uncovered vertices; if a vertex has been covered but we discover a shorter path, we update the value for that key in the symbol table
+            // enqueue all uncovered vertices; update values for covered vertices if more optimal path found
             for (int i : G.adj(vertex)) 
                 if (!st.contains(i) || distance+1 < st.get(i)) {
                     queue.enqueue(i);
