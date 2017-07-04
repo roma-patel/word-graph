@@ -2,7 +2,7 @@ import java.util.*;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.ST;
-// data structures used: two ordered symbol tables (using ST.java in algs4) that perform contains() and put() in logarithmic time, we use an iterable integer list to store synset IDs of nouns that appear in multiple synsets
+
 public class Word {
 
     private final ShortestCommonAncestor s;
@@ -10,7 +10,7 @@ public class Word {
     private ST<Integer, String> st2 = new ST<Integer, String>();
     private Digraph G;
  
-   // the constructor takes in the names of the two input files and then calls individual private methods to deal with each input file accordinglys
+    // input synset and hypernym files from word net
     public Word(String synsets, String hypernyms) {
         if (synsets == null || hypernyms == null)
             throw new NullPointerException();
@@ -20,8 +20,7 @@ public class Word {
         s = new ShortestCommonAncestor(G);
     }
     
-    // create two ordered symbol tables to deal with the synset input file, the first one has keys: individual nouns (string), values: synset ID of the noun (integer). the second has keys: synset ID (integer), values: synset (string) 
-    // time taken: linearithmic in size of input file
+    // create two ordered STs for synset input file, one with keys: individual nouns (string), values: synset ID of the noun (integer). the second with keys: synset ID (integer), values: synset (string) 
     private void syn(String synsets) {
         String[] line, noun;
         In in_synsets = new In(synsets);
@@ -31,7 +30,7 @@ public class Word {
             line = s.split(",");
             noun = line[1].split(" ");
             
-            // integer list stores all the synsets that the noun belongs to
+	    // store all synsets that one noun belongs to
             List<Integer> list;
             for (int i = 0; i < noun.length; i++) {
                 if (!st1.contains(noun[i]))
@@ -45,7 +44,6 @@ public class Word {
         }
     }
     // creates a digraph for the synset-hypernym relations
-    // time taken: linearithmic in input file size
     private void hyp(String hypernyms) {
         // the number of synsets i.e. vertices that should be in the digraph = st2.size()
         G = new Digraph(st2.size());
@@ -60,14 +58,12 @@ public class Word {
         }
     }
 
-    // returns all WordNet nouns in alphabetical order
-    // time taken: O(number of nouns that exist)
+    // returns WordNet nouns in alphabetical order
     public Iterable<String> nouns() {
      return(st1.keys());
     }
 
     // is the word a WordNet noun?
-    // time taken: O(log of number of nouns) 
     public boolean isNoun(String word) {
         if (word == null)
             throw new NullPointerException();
@@ -75,8 +71,7 @@ public class Word {
         return(st1.get(word) != null);
     }
 
-   // returns a synset (second field of synsets.txt) that is a shortest common ancestor of noun1 and noun2
-   // time taken: time taken by ancestor function: O(vertices reachable from the synsets)
+   // returns shortest common ancestor (synset) of noun1 and noun2
     public String sca(String noun1, String noun2) {
         if (noun1 == null || noun2 == null || !isNoun(noun1) || !isNoun(noun2))
             throw new IllegalArgumentException();
@@ -85,8 +80,7 @@ public class Word {
         return st2.get(answer);
     }
 
-    // returns the distance between noun1 and noun2 (defined below)
-    // time taken: time taken by the length function: O(number of vertices reachble from the synsets)
+    // returns path distance between noun1 and noun2 
     public int distance(String noun1, String noun2) {
         if (noun1 == null || noun2 == null || !isNoun(noun1) || !isNoun(noun2))
             throw new IllegalArgumentException();
